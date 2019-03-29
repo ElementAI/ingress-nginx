@@ -17,6 +17,8 @@ limitations under the License.
 package class
 
 import (
+	"strings"
+
 	extensions "k8s.io/api/extensions/v1beta1"
 	"k8s.io/klog"
 )
@@ -58,5 +60,12 @@ func IsValid(ing *extensions.Ingress) bool {
 		return true
 	}
 
-	return ingress == IngressClass
+	classes := strings.Split(IngressClass, ",")
+	for _, c := range classes {
+		if ingress == c {
+			return true
+		}
+	}
+
+	return false
 }
