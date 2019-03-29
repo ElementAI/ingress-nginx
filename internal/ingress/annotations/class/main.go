@@ -17,6 +17,8 @@ limitations under the License.
 package class
 
 import (
+	"strings"
+
 	extensions "k8s.io/api/extensions/v1beta1"
 	"k8s.io/klog"
 )
@@ -36,6 +38,9 @@ var (
 	// An empty string means accept all ingresses without
 	// annotation and the ones configured with class nginx
 	IngressClass = "nginx"
+
+	// IngressClassExtra
+	IngressClassExtra = ""
 )
 
 // IsValid returns true if the given Ingress either doesn't specify
@@ -56,6 +61,15 @@ func IsValid(ing *extensions.Ingress) bool {
 	// 4 - ingress with specific class | different annotation on ingress
 	if ingress == "" && IngressClass == DefaultClass {
 		return true
+	}
+
+	if IngressClassExtra != "" {
+		classes := strings.Split(IngressClassExtra, ",")
+		for _, c := range classes {
+			if ingress == c {
+				return true
+			}
+		}
 	}
 
 	return ingress == IngressClass

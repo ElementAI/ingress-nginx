@@ -56,6 +56,11 @@ requests to the first port of this Service.`)
 The class of an Ingress object is set using the annotation "kubernetes.io/ingress.class".
 All ingress classes are satisfied if this parameter is left empty.`)
 
+		ingressClassExtra = flags.String("ingress-class-extra", "",
+			`Names of the ingress class this controller satisfies.
+The class of an Ingress object is set using the annotation "kubernetes.io/ingress.class".
+All ingress classes are satisfied if this parameter is left empty.`)
+
 		configMap = flags.String("configmap", "",
 			`Name of the ConfigMap containing custom global configurations for the controller.`)
 
@@ -188,6 +193,13 @@ Feature backed by OpenResty Lua libraries. Requires that OCSP stapling is not en
 		}
 
 		class.IngressClass = *ingressClass
+	}
+
+	if *ingressClassExtra != "" {
+		klog.Infof("Watching for Ingress class: %s", *ingressClassExtra)
+		klog.Warningf("Only Ingresses with class %q will be processed by this Ingress controller", *ingressClassExtra)
+
+		class.IngressClassExtra = *ingressClassExtra
 	}
 
 	parser.AnnotationsPrefix = *annotationsPrefix
